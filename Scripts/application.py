@@ -26,9 +26,10 @@ def paint(event):
     x2, y2 = (event.x+3), (event.y+3)
     color = "red"
     # display the mouse movement inside canvas
-    wn.create_oval(x1, y1, x2, y2, fill=color, outline=color)
+    wn.create_oval(x1, y1, x2, y2, fill=color, outline=color, width=10)
 
 def clear():
+    wn.delete('all')
     pass
     
 
@@ -38,28 +39,46 @@ def predict():
     filename = 'drawing'
     wn.postscript(file=filepath + filename + '.eps', colormode="color")
     image = Image.open(filepath + filename + '.eps')
-    image.show()
+    # image.show()
     image.save(filepath + filename +'.png', 'png')
 
     ### Prediction part ###
     model = tf.keras.models.load_model('Digit_classifier.h5')
-    image = cv2.imread('Canvas/drawing.png')
+    # image = cv2.imread('Canvas/drawing.png')
     # image.show()
-    print(image.shape)
-    image = cv2.resize(image, (28,28))
+    #convert black on white to white to black 
+    im_gray = cv2.imread('Canvas/drawing.png', cv2.IMREAD_GRAYSCALE)
+    (thresh, im_bw) = cv2.threshold(im_gray, 250, 255, cv2.THRESH_BINARY_INV)
+    cv2.imwrite('Canvas/bw_image.png', im_bw)
+
+    print(im_bw.shape)
+    image = cv2.resize(im_bw, (28,28))
     print(image.shape)
 
+    # cv2.imshow('img',image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    
     #convert image to grayscale
-    image = np.mean(image, -1, keepdims= True)
-    print(image.shape)
+    # image = np.mean(image, -1, keepdims= True)
+    # print(image.shape)
 
+    image = image[...,np.newaxis]
+    print(image.shape)
     
     image_tensor = tf.convert_to_tensor(image, dtype=tf.float32)
     image_tensor = image_tensor[np.newaxis, ...]
     print(image_tensor.shape)
 
-    print(model.predict(image_tensor))
-    
+    prediction = model.predict(image_tensor)
+    print(prediction)
+    labels = {0:'0',1:'1',2:'2',3:'3', 4:'4', 5:'5', 6:'6', 7:'7',8:'8',9:'9'}
+
+    prediction_label = labels[np.argmax(prediction)]
+    wn.create_text(150, 50, text='Prediction: {}'.format(prediction_label), fill="white", font=('Helvetica 15 bold'))
+    wn.place()
+
+    # print(labels[np.argmax(prediction)])
     pass
 
 wn=Canvas(root, width=500, height=350, bg='black')
