@@ -21,11 +21,11 @@ def predict():
     model = tf.keras.models.load_model('Digit_classifier.h5')
     labels = {0:'0',1:'1',2:'2',3:'3', 4:'4', 5:'5', 6:'6', 7:'7',8:'8',9:'9'}
 
-    saveCanvasDrawingAsGrayscalePNG()
+    save_drawing_as_grayscale_png()
     
-    imgWhiteOnBlack = convertDrawingToWhiteOnBlack()
+    imgWhiteOnBlack = convert_drawing_to_white_on_black()
 
-    image_tensor = resizeAndConvertImageToTensor(imgWhiteOnBlack)
+    image_tensor = convert_img_to_tensor(imgWhiteOnBlack)
     
     prediction = model.predict(image_tensor)
     
@@ -42,11 +42,11 @@ def paint(event):
     # display the mouse movement inside canvas
     wn.create_oval(x1, y1, x2, y2, fill=color, outline=color, width=10)
 
-def clearTheScreen():
+def clear_the_screen():
     wn.delete('all')
     pass
     
-def saveCanvasDrawingAsGrayscalePNG():
+def save_drawing_as_grayscale_png():
     filepath = 'Canvas/'
     filename = 'drawing'
     # we need to save drawing as postscript before saving as
@@ -58,13 +58,13 @@ def saveCanvasDrawingAsGrayscalePNG():
     image = ImageOps.grayscale(image)
     image.save(filepath + filename +'.png', 'png')
     
-def convertDrawingToWhiteOnBlack():
+def convert_drawing_to_white_on_black():
     im_gray = cv2.imread('Canvas/drawing.png', cv2.IMREAD_GRAYSCALE)
     (thresh, im_bw) = cv2.threshold(im_gray, 250, 255, cv2.THRESH_BINARY_INV)
     cv2.imwrite('Canvas/bw_image.png', im_bw)
     return im_bw
     
-def resizeAndConvertImageToTensor(image):
+def convert_img_to_tensor(image):
     image = cv2.resize(image, (28,28))
     # adding dummy axes to convert to tensor
     image = image[...,np.newaxis]
@@ -85,10 +85,11 @@ if __name__ == "__main__":
     wn.bind('<B1-Motion>', paint)
     wn.place(x = 100)
 
+    # Creating buttons on the UI 
     quitButton = Button(root, text='Quit',command = root.quit, bg='white',width=5, height=1 )            
     quitButton.place(x=5, y = 10)
 
-    saveButton = Button(root, text='Clear', command = clearTheScreen, bg = 'white', width=5, height=1)
+    saveButton = Button(root, text='Clear', command = clear_the_screen, bg = 'white', width=5, height=1)
     saveButton.place(x = 5, y = 50)
 
     predictButton = Button(root, text = 'Predict',command= predict, bg='white', width=5, height=1 )
