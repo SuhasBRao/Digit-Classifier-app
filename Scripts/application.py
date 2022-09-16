@@ -1,5 +1,5 @@
 '''
-This file creates the GUI of the app and allows the
+This file creates a GUI app and allows the
 User to draw any numbers from 0 to 9 and to predict it.
 
 Note: - The app only recognizes digits from 0 to 9
@@ -16,8 +16,8 @@ import numpy as np
 import cv2
 import tensorflow as tf
 
-def predict():
-    
+def initializePrediction():
+
     model = tf.keras.models.load_model('Digit_classifier.h5')
     labels = {0:'0',1:'1',2:'2',3:'3', 4:'4', 5:'5', 6:'6', 7:'7',8:'8',9:'9'}
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     saveButton = Button(root, text='Clear', command = clear_the_screen, bg = 'white', width=5, height=1)
     saveButton.place(x = 5, y = 50)
 
-    predictButton = Button(root, text = 'Predict',command= predict, bg='white', width=5, height=1 )
+    predictButton = Button(root, text = 'Predict',command= initializePrediction, bg='white', width=5, height=1 )
     predictButton.place(x=5, y = 90)
 
     root.mainloop()
