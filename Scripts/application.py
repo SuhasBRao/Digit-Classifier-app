@@ -17,8 +17,15 @@ import cv2
 import tensorflow as tf
 
 def initializePrediction():
+    '''
+    The function initializes the prediction by loading the model
+    from a pre-scpecified path. You can modify the path if necessary.
+    
+    Path = 'Models/ACC_98.77.h5'
+    '''
+    # model = tf.keras.models.load_model('Digit_classifier.h5')
 
-    model = tf.keras.models.load_model('Digit_classifier.h5')
+    model = tf.keras.models.load_model("Models/ACC_98.77.h5")
     labels = {0:'0',1:'1',2:'2',3:'3', 4:'4', 5:'5', 6:'6', 7:'7',8:'8',9:'9'}
 
     save_drawing_as_grayscale_png()
@@ -35,6 +42,10 @@ def initializePrediction():
     wn.place()
 
 def paint(event):
+    '''
+    The function allows the user to draw on the canvas
+
+    '''
     # get x1, y1, x2, y2 co-ordinates
     x1, y1 = (event.x-3), (event.y-3)
     x2, y2 = (event.x+3), (event.y+3)
@@ -43,10 +54,18 @@ def paint(event):
     wn.create_oval(x1, y1, x2, y2, fill=color, outline=color, width=10)
 
 def clear_the_screen():
+    '''
+    The function clears the canvas screen to remove any drawings on 
+    the canvas
+    '''
     wn.delete('all')
     pass
     
 def save_drawing_as_grayscale_png():
+    '''
+    The function saves the drawing as a png image
+    which is later used while prediction.
+    '''
     filepath = 'Canvas/'
     filename = 'drawing'
     # we need to save drawing as postscript before saving as
@@ -59,12 +78,24 @@ def save_drawing_as_grayscale_png():
     image.save(filepath + filename +'.png', 'png')
     
 def convert_drawing_to_white_on_black():
+    '''
+    The function reads and changes the drawing image to 
+    white on black background.
+    
+    img_path = "Canvas/drawing.png"
+    '''
     im_gray = cv2.imread('Canvas/drawing.png', cv2.IMREAD_GRAYSCALE)
     (thresh, im_bw) = cv2.threshold(im_gray, 250, 255, cv2.THRESH_BINARY_INV)
     cv2.imwrite('Canvas/bw_image.png', im_bw)
     return im_bw
     
 def convert_img_to_tensor(image):
+    '''
+    The function converts the given image to a tensor of 
+    required dimensions. 
+    
+    Image is converted o 28*28 pixels and additional axis are added.
+    '''
     image = cv2.resize(image, (28,28))
     # adding dummy axes to convert to tensor
     image = image[...,np.newaxis]
